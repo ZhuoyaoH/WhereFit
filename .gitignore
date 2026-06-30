@@ -1,0 +1,29 @@
+.DS_Store
+**/.DS_Store
+
+# Python runtime/cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and dependency caches
+.venv/
+venv/
+env/
+.conda-env/
+.conda-pkgs/
+.pip-cache/
+WhereFit/
+
+# Local API/cache data regenerated at runtime
+data/cache/
+
+# Local secrets
+.env
+
+# Local planning/source exports, not required to run the app
+FromChatgpt/
+改进计划/
