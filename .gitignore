@@ -1,0 +1,48 @@
+.DS_Store
+**/.DS_Store
+
+# Python runtime/cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments and dependency caches.
+# /WhereFit/ is a local runtime folder on this machine, not application source.
+.venv/
+venv/
+env/
+.conda-env/
+.conda-pkgs/
+.pip-cache/
+/WhereFit/
+
+# Local API/cache data regenerated at runtime
+data/cache/
+
+# The Studio release intentionally includes read-only ERA5 historical weather for
+# the covered city list. Other runtime cache categories remain excluded.
+!data/cache/
+!data/cache/weather/
+!data/cache/weather/history/
+!data/cache/weather/history/*.csv
+!data/cache/weather/history/chunks/
+!data/cache/weather/history/chunks/*.csv
+
+# Local logs/debug notes
+OPERATION_LOG.md
+*.log
+logs/
+debug/
+debug_*/
+debug.*
+
+# Local secrets
+.env
+
+# Local planning/source exports, not required to run the app
+FromChatgpt/
+改进计划/
+abstract_APgarss.md
