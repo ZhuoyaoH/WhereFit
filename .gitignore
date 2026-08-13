@@ -22,15 +22,6 @@ env/
 # Local API/cache data regenerated at runtime
 data/cache/
 
-# The Studio release intentionally includes read-only ERA5 historical weather for
-# the covered city list. Other runtime cache categories remain excluded.
-!data/cache/
-!data/cache/weather/
-!data/cache/weather/history/
-!data/cache/weather/history/*.csv
-!data/cache/weather/history/chunks/
-!data/cache/weather/history/chunks/*.csv
-
 # Local logs/debug notes
 OPERATION_LOG.md
 *.log

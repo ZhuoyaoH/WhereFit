@@ -8,6 +8,7 @@ from urllib.parse import quote
 import pandas as pd
 import pydeck as pdk
 
+from wherefit.data_loader import display_city_name
 from wherefit.models import CityResult
 
 
@@ -34,7 +35,7 @@ def make_map(results: list[CityResult]) -> pdk.Deck:
     positions = [_display_position(item.location.latitude, item.location.longitude, item.location.country) for item in results]
     data = pd.DataFrame(
         {
-            "city": [item.location.city for item in results],
+            "city": [display_city_name(item.location.city, item.location.city_en) for item in results],
             "country": [item.location.country for item in results],
             "latitude": [lat for lat, _ in positions],
             "longitude": [lon for _, lon in positions],
@@ -71,7 +72,7 @@ def make_earthquake_map(location, events: list[dict[str, object]]) -> pdk.Deck:
     event_rows = _display_event_rows(events, location.country)
     city_data = pd.DataFrame(
         {
-            "city": [location.city],
+            "city": [display_city_name(location.city, location.city_en)],
             "latitude": [city_lat],
             "longitude": [city_lon],
             "kind": ["城市"],
@@ -120,7 +121,7 @@ def make_typhoon_track_map(location, track_points: list[dict[str, object]]) -> p
     track_data = _display_track_rows(track_points, location.country)
     city_data = pd.DataFrame(
         {
-            "city": [location.city],
+            "city": [display_city_name(location.city, location.city_en)],
             "latitude": [city_lat],
             "longitude": [city_lon],
             "name": ["城市"],

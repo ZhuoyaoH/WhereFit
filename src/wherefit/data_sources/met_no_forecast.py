@@ -23,7 +23,7 @@ from wherefit.models import ForecastSummary, Location
 
 
 PROVIDER_NAME = "MET Norway Locationforecast API"
-USER_AGENT = "WhereFit/1.0 (public ModelScope Studio)"
+USER_AGENT = "WhereFit/1.0 https://github.com/ZhuoyaoH/WhereFit"
 
 
 def get_met_no_forecast_summary(

@@ -1,4 +1,4 @@
-# WhereFit
+# WhereFit AI
 
 WhereFit helps you compare cities through the climate preferences that matter to you: heat, cold, humidity, rain, air quality, and difficult weather. It is an open-source Streamlit project for travel planning, long-term living exploration, and side-by-side city comparison.
 

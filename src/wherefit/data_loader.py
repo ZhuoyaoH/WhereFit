@@ -148,9 +148,11 @@ CITY_ALIASES = {
     "hong kong": "Hong Kong",
     "hongkong": "Hong Kong",
     "香港": "Hong Kong",
+    "香港特别行政区": "Hong Kong",
     "macau": "Macau",
     "macao": "Macau",
     "澳门": "Macau",
+    "澳门特别行政区": "Macau",
     "taipei": "Taipei",
     "台北": "Taipei",
     "mohe": "Mohe",
@@ -183,6 +185,21 @@ CITY_ALIASES = {
     "bangkok": "Bangkok",
     "曼谷": "Bangkok",
 }
+
+ZH_CITY_DISPLAY_NAMES = {
+    "Hong Kong": "香港特别行政区",
+    "Macau": "澳门特别行政区",
+}
+
+
+def display_city_name(city: object, city_en: object = "", lang: str = "zh") -> str:
+    """Return the localized city label without changing the stable city identifier."""
+
+    chinese_name = str(city)
+    english_name = str(city_en) if str(city_en).strip() else chinese_name
+    if lang == "en":
+        return english_name
+    return ZH_CITY_DISPLAY_NAMES.get(english_name, chinese_name)
 
 
 def load_seed_cities(path: str | Path) -> pd.DataFrame:

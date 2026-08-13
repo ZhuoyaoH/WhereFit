@@ -6,11 +6,12 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
+from wherefit.data_loader import display_city_name
 from wherefit.models import CityResult
 
 
-RADAR_KEYS = ["温度舒适", "湿度舒适", "降水友好", "空气质量", "高温适配", "强降水适配"]
-RADAR_LABELS_EN = ["Temperature", "Humidity", "Rain", "Air quality", "Heat fit", "Heavy-rain fit"]
+RADAR_KEYS = ["温度舒适", "湿度舒适", "降水友好", "空气质量", "高温较少", "强降雨较少"]
+RADAR_LABELS_EN = ["Temperature", "Humidity", "Rain", "Air quality", "Less heat", "Less heavy rain"]
 
 
 def make_radar_chart(city_result: CityResult, lang: str = "zh") -> go.Figure:
@@ -28,8 +29,12 @@ def make_radar_chart(city_result: CityResult, lang: str = "zh") -> go.Figure:
         go.Scatterpolar(
             r=values + values[:1],
             theta=_radar_labels(lang) + _radar_labels(lang)[:1],
+            mode="lines+markers",
             fill="toself",
-            name=city_result.location.city_en if lang == "en" else city_result.location.city,
+            fillcolor="rgba(196, 181, 253, 0.50)",
+            line={"color": "#7C3AED", "width": 2.5},
+            marker={"color": "#6D28D9", "size": 7},
+            name=display_city_name(city_result.location.city, city_result.location.city_en, lang),
         )
     )
     fig.update_layout(
@@ -76,4 +81,4 @@ def _radar_labels(lang: str) -> list[str]:
 
 
 def _city_name(item: CityResult, lang: str) -> str:
-    return item.location.city_en or item.location.city if lang == "en" else item.location.city
+    return display_city_name(item.location.city, item.location.city_en, lang)

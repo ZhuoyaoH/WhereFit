@@ -27,6 +27,7 @@ from wherefit.config import (
 from wherefit.city_filter import CityFilterOptions, candidate_city_input, filter_seed_cities
 from wherefit.data_loader import (
     attach_long_term_air_quality,
+    display_city_name,
     load_climate_baseline,
     load_seed_cities,
     match_cities,
@@ -111,10 +112,12 @@ REGION_TYPE_LABELS = {
     "tropical": "热带",
 }
 ADMIN_LEVEL_LABELS = {
+    "capital": "自治区首府",
     "municipality": "直辖市",
     "provincial_capital": "省会城市",
     "autonomous_region_capital": "自治区首府",
     "special_administrative_region": "特别行政区",
+    "special_admin": "特别行政区",
     "global_city": "国际城市",
     "city": "普通城市",
 }
@@ -417,7 +420,7 @@ def _sidebar_inputs(lang: str) -> tuple[UserPreference, str, str, str, bool, dic
                 format_func=lambda m: _month_label(m, lang),
                 key="travel_month",
             )
-            forecast_window = _forecast_window_for_month(start_default, end_default, month)
+            data_mode, forecast_window = _travel_data_mode_for_month(start_default, end_default, month)
             if forecast_window is not None:
                 forecast_start, forecast_end = forecast_window
                 data_mode = DATA_MODE_FORECAST
@@ -429,15 +432,13 @@ def _sidebar_inputs(lang: str) -> tuple[UserPreference, str, str, str, bool, dic
                     "force_refresh": False,
                 }
             else:
-                data_mode = DATA_MODE_HISTORY
                 st.info(
                     _t(
                         lang,
-                        "所选月份不在当前 1-16 天有效天气预报范围内，只显示该月份的历史气候数据。",
-                        "The selected month is outside the current 1-16 day forecast window, so only historical climate data is shown for that month.",
+                        "所选月份暂无短期天气预报，排名使用 2000—2025 年该月的多年气候数据。",
+                        "Short-term forecasts are not available for the selected month, so the ranking uses the bundled 2000–2025 climate baseline for that month.",
                     )
                 )
-                history_start, history_end, force_refresh = _history_settings(lang, expanded=False)
         elif mode == "Living":
             month = MONTH_ALL
             data_mode = DATA_MODE_HISTORY
@@ -508,6 +509,15 @@ def _forecast_window_for_month(start_date: str, end_date: str, month: int) -> tu
     if not matching_dates:
         return None
     return matching_dates[0].isoformat(), matching_dates[-1].isoformat()
+
+
+def _travel_data_mode_for_month(start_date: str, end_date: str, month: int) -> tuple[str, tuple[str, str] | None]:
+    """Choose short-term forecasts only when the selected month overlaps their valid window."""
+
+    forecast_window = _forecast_window_for_month(start_date, end_date, month)
+    if forecast_window is not None:
+        return DATA_MODE_FORECAST, forecast_window
+    return DATA_MODE_STATIC, None
 
 
 def _localized_date_input(lang: str, zh_label: str, en_label: str, value: date, key: str) -> date:
@@ -654,7 +664,10 @@ def _candidate_city_input_for_lang(data: pd.DataFrame, limit: int | None, lang: 
     if lang == LANG_EN and "city_en" in rows.columns:
         return ", ".join(str(city) for city in rows["city_en"].tolist())
     if "city_zh" in rows.columns:
-        return ", ".join(str(city) for city in rows["city_zh"].tolist())
+        return ", ".join(
+            display_city_name(row.get("city_zh", row.get("city", "")), row.get("city_en", ""), lang)
+            for _, row in rows.iterrows()
+        )
     return candidate_city_input(rows, limit=None)
 
 
@@ -675,13 +688,21 @@ def _location_filter_labels(data: pd.DataFrame, lang: str) -> dict[str, str]:
         if str(row.get("country", "")) == "China":
             province = str(row.get("province", ""))
             if province:
-                labels[f"province:{province}"] = province
+                labels[f"province:{province}"] = _china_location_label(row, lang)
         else:
             city = str(row.get("city", ""))
             if city:
-                display = str(row.get("city_en" if lang == LANG_EN else "city_zh", city))
+                display = display_city_name(row.get("city_zh", city), row.get("city_en", city), lang)
                 labels[f"city:{city}"] = display
     return dict(sorted(labels.items(), key=lambda item: item[1]))
+
+
+def _china_location_label(row: pd.Series, lang: str) -> str:
+    """Return a clear Chinese label for a mainland province or special administrative region."""
+
+    if lang == LANG_ZH and str(row.get("admin_level", "")) == "special_admin":
+        return display_city_name(row.get("city_zh", row.get("city", "")), row.get("city_en", ""), lang)
+    return str(row.get("province", ""))
 
 
 def _location_values(values: list[str], kind: str) -> list[str]:
@@ -795,7 +816,15 @@ def _candidate_preview_table(data: pd.DataFrame, lang: str) -> pd.DataFrame:
     if lang == LANG_ZH:
         columns["province"] = "省份/地区"
     available = [column for column in columns if column in data.columns]
-    table = data[available].rename(columns=columns)
+    table = data[available].copy()
+    if lang == LANG_ZH and "city_zh" in table.columns:
+        table["city_zh"] = data.apply(
+            lambda row: display_city_name(row.get("city_zh", row.get("city", "")), row.get("city_en", ""), lang),
+            axis=1,
+        )
+    if lang == LANG_ZH and "province" in table.columns:
+        table["province"] = data.apply(lambda row: _china_location_label(row, lang), axis=1)
+    table = table.rename(columns=columns)
     bool_columns = [column for column in [_t(lang, "沿海", "Coastal"), _t(lang, "台风区域", "Typhoon Zone")] if column in table.columns]
     for column in bool_columns:
         table[column] = table[column].map(lambda value: _yes_no(value, lang))
@@ -1043,7 +1072,7 @@ def _render_results(results: list[CityResult], pref: UserPreference, data_mode: 
 
 def _tab_specs(pref: UserPreference, data_mode: str, lang: str) -> list[tuple[str, str]]:
     specs = [
-        (_t(lang, "城市适配", "City Fit"), "overview"),
+        (_t(lang, "城市比较", "City Comparison"), "overview"),
         (_t(lang, "历史天气", "Historical Weather"), "history"),
         (_t(lang, "未来预报", "Forecast"), "forecast"),
         (_t(lang, "历史灾害", "Historical Hazards"), "hazard"),
@@ -1184,7 +1213,7 @@ def _render_overview(results: list[CityResult], pref: UserPreference, data_mode:
         st.plotly_chart(make_ranking_bar_chart(results, lang), width="stretch")
     with radar_col:
         selected_key = _localized_city_selectbox(
-            _t(lang, "查看城市画像", "City Profile"),
+            _t(lang, "查看城市气候特点", "City Climate Snapshot"),
             results,
             lang,
             "profile_city",
@@ -1412,7 +1441,7 @@ def _query_forecast_summaries(
 def _render_forecast_summaries(summaries: list[ForecastSummary], lang: str) -> None:
     table = pd.DataFrame(
         {
-            _t(lang, "城市", "City"): [item.city if lang == LANG_ZH else _city_en_from_summary(item.city) for item in summaries],
+            _t(lang, "城市", "City"): [_city_display_from_summary(item.city, lang) for item in summaries],
             _t(lang, "数据源", "Source"): [_source_label(item.provider or item.source, lang) for item in summaries],
             _t(lang, "状态", "Status"): [_status_label(item.status, lang) for item in summaries],
             _t(lang, "天数", "Days"): [item.days for item in summaries],
@@ -1440,7 +1469,7 @@ def _render_recent_air_quality(results: list[CityResult], lang: str) -> None:
     st.markdown(f"**{_t(lang, '近期空气质量（仅旅行评分）', 'Recent Air Quality (Travel scoring only)')}**")
     table = pd.DataFrame(
         {
-            _t(lang, "城市", "City"): [item.city if lang == LANG_ZH else _city_en_from_summary(item.city) for item in summaries],
+            _t(lang, "城市", "City"): [_city_display_from_summary(item.city, lang) for item in summaries],
             "PM2.5": [item.pm25_mean for item in summaries],
             "US AQI": [item.us_aqi_mean for item in summaries],
             _t(lang, "时间窗口", "Time Window"): [
@@ -1462,7 +1491,7 @@ def _render_recent_air_quality(results: list[CityResult], lang: str) -> None:
 
 def _render_hazard_tab(results: list[CityResult], lang: str) -> None:
     st.subheader(_t(lang, "历史灾害记录", "Historical Hazard Records"))
-    st.warning(_hazard_disclaimer(lang))
+    st.info(_hazard_disclaimer(lang))
     selected_key = _localized_city_selectbox(
         _t(lang, "选择城市", "Select City"),
         results,
@@ -1560,7 +1589,7 @@ def _render_hazard_summary(summary: HazardSummary, location, lang: str) -> None:
     st.markdown(f"**{_t(lang, '滑坡摘要', 'Landslide Summary')}:** {_hazard_note(summary.landslide_note, lang, 'landslide')}")
     if summary.hazard_exposure_score is not None:
         st.metric(
-            _t(lang, "灾害与环境参考", "Hazard and Environmental Reference"),
+            _t(lang, "灾害和环境情况", "Hazard and Environmental Notes"),
             f"{summary.hazard_exposure_score:.0f}/100",
             help=_t(
                 lang,
@@ -1626,7 +1655,7 @@ def _render_aurora_tab(results: list[CityResult], lang: str) -> None:
     ]
     table = pd.DataFrame(
         {
-            _t(lang, "城市", "City"): [item.city if lang == LANG_ZH else _city_en_from_summary(item.city) for item in summaries],
+            _t(lang, "城市", "City"): [_city_display_from_summary(item.city, lang) for item in summaries],
             _t(lang, "机会等级", "Opportunity Level"): [_aurora_label(item.opportunity_label, lang) for item in summaries],
             _t(lang, "极光机会分", "Aurora Opportunity"): [item.opportunity_score for item in summaries],
             _t(lang, "附近区域机会", "Nearby Area Chance"): [item.nearest_probability for item in summaries],
@@ -1647,7 +1676,7 @@ def _ranking_table(results: list[CityResult], lang: str) -> pd.DataFrame:
             {
                 _t(lang, "排名", "Rank"): index,
                 _t(lang, "城市", "City"): _city_name(item, lang),
-                _t(lang, "省份/地区", "Country"): item.location.province if lang == LANG_ZH else item.location.country,
+                _t(lang, "省份/地区", "Country"): _city_place_label(item, lang),
                 _t(lang, "你的偏好匹配分", "Your Preference Match"): round(item.score.personal_fit_score, 1),
                 _t(lang, "多年气候匹配分", "Climate Match"): round(item.score.climate_normal_fit_score, 1),
                 _t(lang, "短期预报", "Short-term Forecast"): None if item.score.forecast_trip_fit_score is None else round(item.score.forecast_trip_fit_score, 1),
@@ -1723,7 +1752,7 @@ def _time_scope_label(pref: UserPreference, data_mode: str, lang: str) -> str:
 def _city_card(index: int, item: CityResult, pref: UserPreference, lang: str) -> None:
     label, color = score_label(item.score.personal_fit_score)
     display_label = _score_label(label, lang)
-    place = item.location.province if lang == LANG_ZH else item.location.country
+    place = _city_place_label(item, lang)
     status = _status_badge_html(item.score.data_status, lang)
     strengths = "".join(_chip_html(_display_phrase(text, lang), "good") for text in item.score.strengths[:3])
     weaknesses = "".join(_chip_html(_display_phrase(text, lang), "warn") for text in item.score.weaknesses[:2])
@@ -1822,12 +1851,12 @@ def _method_section(lang: str) -> None:
             **时间尺度规则**
 
             - 多年气候数据覆盖 2000—2025 年；如果你选择查看指定日期范围，应用会另外读取那段时期的历史天气。
-            - 全年模式会把全年下雨、高温和寒冷天数按月平均后再比较，避免因为时间更长而显得“更糟”。
+            - 全年模式会把全年下雨、高温和寒冷天数按月平均后再比较。
             - 体感温度由温度、湿度和风速算出；“可能下雪日”由温度和降水推算，不是实测雪天。多年空气质量使用 2015—2024 年的数据。
             - 近期 PM2.5 只用于近期旅行比较，不会替代多年的空气质量情况。
             - 如果未来天气暂时取不到，应用会使用多年气候数据继续比较，不会把城市直接算成 0 分。
 
-            **独立证据页面**
+            **其他信息**
 
             - 地震、台风路径、洪涝/滑坡记录、河流水量和极光情况都在你需要时才查询。
             - 路径靠近、暂未查到记录、河流水量和极光机会都不等于损失、安全程度或事件发生概率。
@@ -1856,7 +1885,15 @@ def _t(lang: str, zh: str, en: str) -> str:
 
 
 def _city_name(item: CityResult, lang: str) -> str:
-    return item.location.city_en or item.location.city if lang == LANG_EN else item.location.city
+    return display_city_name(item.location.city, item.location.city_en, lang)
+
+
+def _city_place_label(item: CityResult, lang: str) -> str:
+    """Show a province normally and repeat the full special-region name when needed."""
+
+    if lang == LANG_ZH and item.location.admin_level == "special_admin":
+        return _city_name(item, lang)
+    return item.location.country if lang == LANG_EN else item.location.province
 
 
 def _localized_city_selectbox(label: str, results: list[CityResult], lang: str, state_key: str) -> str:
@@ -1896,6 +1933,12 @@ def _city_en_from_summary(city: str) -> str:
     if not matched.empty:
         return str(matched.iloc[0].get("city_en") or matched.iloc[0].get("city") or city)
     return city
+
+
+def _city_display_from_summary(city: str, lang: str) -> str:
+    """Localize a provider summary city while keeping its original value for cache keys."""
+
+    return display_city_name(city, _city_en_from_summary(city), lang)
 
 
 def _mode_label(value: str, lang: str) -> str:
@@ -2197,7 +2240,7 @@ def _event_table(events: list[dict[str, object]], lang: str) -> pd.DataFrame:
         for column in ["日期", "距离"]:
             if column in table.columns:
                 table[column] = table[column].map(lambda value: "" if pd.isna(value) else str(value))
-        return table
+        return table.rename(columns={"数据口径": "资料说明", "证据类型": "资料类型"})
     if not events:
         return pd.DataFrame()
     rows = []
@@ -2206,8 +2249,8 @@ def _event_table(events: list[dict[str, object]], lang: str) -> pd.DataFrame:
             {
                 "Type": _hazard_event_type_en(str(event.get("类型", ""))),
                 "Record": _hazard_event_record_en(str(event.get("记录", ""))),
-                "Data Basis": _hazard_event_basis_en(str(event.get("数据口径", ""))),
-                "Evidence Type": _hazard_evidence_type_en(str(event.get("证据类型", ""))),
+                "Source Details": _hazard_event_basis_en(str(event.get("数据口径", ""))),
+                "Source Type": _hazard_evidence_type_en(str(event.get("证据类型", ""))),
             }
         )
     return pd.DataFrame(rows)
@@ -2521,12 +2564,16 @@ def _inject_css() -> None:
         label[data-baseweb="radio"]:has(input:checked) > div:first-child > div {
             background: #ffffff !important;
         }
+        /* The first layer is only a layout container.  Keep it transparent so
+           the selected segment remains a thin line instead of a filled block. */
         [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child {
-            background: #ede9fe !important;
+            background: transparent !important;
         }
         [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div,
-        [data-testid="stSlider"] [data-baseweb="slider"] > div:nth-child(2) {
-            background: #a78bfa !important;
+        [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div::before,
+        [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div::after {
+            background: transparent !important;
+            background-image: none !important;
         }
         [data-testid="stSlider"] [role="slider"] {
             background: #a78bfa !important;
@@ -2834,7 +2881,7 @@ def _theme_override_css() -> str:
         return _night_theme_css(wrap=True)
     if mode == "day":
         return _day_theme_css(wrap=True)
-    return f"<style>@media (prefers-color-scheme: dark) {{{_night_theme_css(wrap=False)}}}</style>"
+    return f"<style>{_day_theme_css(wrap=False)}@media (prefers-color-scheme: dark) {{{_night_theme_css(wrap=False)}}}</style>"
 
 
 def _day_theme_css(wrap: bool) -> str:
@@ -2914,11 +2961,13 @@ def _night_theme_css(wrap: bool) -> str:
         background: #111827 !important;
     }
     [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child {
-        background: #30264f !important;
+        background: transparent !important;
     }
     [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div,
-    [data-testid="stSlider"] [data-baseweb="slider"] > div:nth-child(2) {
-        background: var(--wf-purple) !important;
+    [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div::before,
+    [data-testid="stSlider"] [data-baseweb="slider"] > div:first-child > div::after {
+        background: transparent !important;
+        background-image: none !important;
     }
     [data-testid="stSlider"] [role="slider"] {
         background: var(--wf-purple) !important;

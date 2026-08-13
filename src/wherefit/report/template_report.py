@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from calendar import month_name
 
+from wherefit.data_loader import display_city_name
 from wherefit.models import CityResult, UserPreference
 
 
@@ -90,7 +91,7 @@ def generate_comparison_report(results: list[CityResult], pref: UserPreference, 
 
 
 def _city_name(city_result: CityResult, lang: str) -> str:
-    return city_result.location.city_en or city_result.location.city if lang == "en" else city_result.location.city
+    return display_city_name(city_result.location.city, city_result.location.city_en, lang)
 
 
 def _pm25_context(city_result: CityResult, lang: str) -> str:
