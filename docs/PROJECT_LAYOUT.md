@@ -47,10 +47,10 @@ FromChatgpt/             # Local planning/source exports
 
 ## Why not move `WhereFit/.conda-env`
 
-The current conda environment contains scripts whose shebangs point to the absolute path:
+The current conda environment contains scripts whose shebangs point to an absolute path under the project directory:
 
 ```text
-/Users/zhuoyao/Documents/WhereFit/WhereFit/.conda-env
+<project-root>/WhereFit/.conda-env
 ```
 
 Moving that directory would preserve files but can break entrypoints such as `streamlit`. For now, the safer cleanup is to document `WhereFit/` as local runtime state and keep it ignored. New environments should use a less confusing path such as `.conda-env/` at the repo root or an external conda/mamba environment outside the repository.

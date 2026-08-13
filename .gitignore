@@ -37,3 +37,6 @@ debug.*
 FromChatgpt/
 改进计划/
 abstract_APgarss.md
+docs/agent-runs/
+release/
+RELEASE_MANIFEST.md
