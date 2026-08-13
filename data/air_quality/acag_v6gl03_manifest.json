@@ -1,0 +1,101 @@
+{
+  "source_product": "ACAG SatPM2.5",
+  "source_version": "V6.GL.03",
+  "source_registry": "https://registry.opendata.aws/surface-pm2-5-v6gl/",
+  "license": "CC BY 4.0",
+  "accessed_on": "2026-07-31",
+  "year_start": 2015,
+  "year_end": 2024,
+  "years": [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024
+  ],
+  "resolution_degrees": 0.1,
+  "spatial_method": "mean of finite cells in 3x3 0.1-degree window",
+  "city_count": 77,
+  "record_count": 770,
+  "output_file": "acag_v6gl03_city_annual_2015_2024.csv",
+  "output_sha256": "70385b35ce7f36fa98e62a031fc4d6cdf575fa757deb847a75f76655022436be",
+  "sources": [
+    {
+      "year": 2015,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.201501-201512.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.201501-201512.nc",
+      "bytes": 5186960,
+      "sha256": "39c2cb5a7cf88ef55f8b57fbd8e5d5a2fc8d6b6fc4cef36c23d23972f82279e4"
+    },
+    {
+      "year": 2016,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.201601-201612.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.201601-201612.nc",
+      "bytes": 5198663,
+      "sha256": "922990c7a1ad62830340b22099a26101568e0beb8ee3743c7457857e0b109a96"
+    },
+    {
+      "year": 2017,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.201701-201712.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.201701-201712.nc",
+      "bytes": 5226115,
+      "sha256": "faa7a2241dc9e6cf328a7684f2051c4e0e09f28b422c6a3cdd8beb4f10b95669"
+    },
+    {
+      "year": 2018,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.201801-201812.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.201801-201812.nc",
+      "bytes": 5204360,
+      "sha256": "7e7b112ab28c7d3a30fa12d53ba4e2fd524ef855f31002b2ba752b738b0c35ec"
+    },
+    {
+      "year": 2019,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.201901-201912.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.201901-201912.nc",
+      "bytes": 5204718,
+      "sha256": "b16bcef4bb26d937366727bfc8b2d8634b3ffed4f13fe5f1e1b5a9a0feb6e570"
+    },
+    {
+      "year": 2020,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.202001-202012.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.202001-202012.nc",
+      "bytes": 5180163,
+      "sha256": "16871a040fbcc43de5d8f9ebac374f75ba3a5387b1a66ecbb551d0791004ce64"
+    },
+    {
+      "year": 2021,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.202101-202112.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.202101-202112.nc",
+      "bytes": 5217831,
+      "sha256": "179be14da6e2f2ffb78d18158b290f7b4c4e2be1744020c0f8843a81c85d7403"
+    },
+    {
+      "year": 2022,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.202201-202212.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.202201-202212.nc",
+      "bytes": 5222698,
+      "sha256": "e8cb495762c85f913ec398e82dcf2975086b93e9a535ce54d4f136663e521902"
+    },
+    {
+      "year": 2023,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.202301-202312.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.202301-202312.nc",
+      "bytes": 5201631,
+      "sha256": "89ae44c70d939a5ae5ed298264e026fc3ce50e3af76ba3de53ba51c11d34a8e3"
+    },
+    {
+      "year": 2024,
+      "url": "https://satpmdata.s3.amazonaws.com/V6GL03/CoarseResolution/GL/Annual/V6GL03.CNNPM25.0p10.GL.202401-202412.nc",
+      "filename": "V6GL03.CNNPM25.0p10.GL.202401-202412.nc",
+      "bytes": 5215968,
+      "sha256": "2362887e8838315338574da9a149e85bf56fd09c34597f99424f3735387e5a11"
+    }
+  ],
+  "citation": "SatPM2.5 was accessed on 2026-07-31 from https://registry.opendata.aws/surface-pm2-5-v6gl/.",
+  "method_note": "Satellite-, simulation-, and monitor-fused annual ground-level PM2.5 estimate; not a pure station observation."
+}
