@@ -1,0 +1,1222 @@
+{
+  "schema_version": 1,
+  "built_at_utc": "2026-08-01T02:58:54.372170+00:00",
+  "source": {
+    "provider": "NASA POWER",
+    "product": "Daily API",
+    "endpoint": "https://power.larc.nasa.gov/api/temporal/daily/point",
+    "model": "NASA POWER / MERRA-2",
+    "resolution": "0.5 degree latitude x 0.625 degree longitude (~50 km)",
+    "access": "public NASA Earth Science data; attribution requested",
+    "documentation_url": "https://power.larc.nasa.gov/docs/services/api/temporal/daily/",
+    "citation_url": "https://power.larc.nasa.gov/docs/referencing/"
+  },
+  "request": {
+    "start_date": "2000-01-01",
+    "end_date": "2025-12-31",
+    "community": "AG",
+    "time_standard": "LST",
+    "daily_variables": [
+      "T2M",
+      "T2M_MAX",
+      "T2M_MIN",
+      "RH2M",
+      "PRECTOTCORR",
+      "WS10M",
+      "WS10M_MAX"
+    ]
+  },
+  "aggregation": {
+    "temperature_fields": "mean of daily values across the selected calendar period",
+    "day_count_fields": "mean yearly count within the selected calendar period",
+    "thresholds": {
+      "precipitation_day": "precipitation_sum >= 1 mm/day",
+      "heavy_rain_day": "precipitation_sum >= 20 mm/day",
+      "extreme_rain_day": "precipitation_sum >= 50 mm/day",
+      "hot_day": "temperature_2m_max >= 35 C",
+      "cold_day": "temperature_2m_min <= 0 C",
+      "windy_day": "WS10M_MAX >= 10.8 m/s (38.88 km/h)",
+      "snow_day_proxy": "PRECTOTCORR >= 1 mm/day and T2M <= 0 C"
+    },
+    "derived_fields": {
+      "apparent_temperature_mean_c": "T2M + 0.33*e - 0.70*WS10M - 4.0; e=(RH2M/100)*6.105*exp(17.27*T2M/(237.7+T2M))",
+      "snow_days_mean": "temperature-and-precipitation proxy, not observed snowfall"
+    },
+    "changes_from_source": "daily model-grid values aggregated to city-centre monthly and annual summaries"
+  },
+  "inputs": {
+    "city_seed": "data/city_seed.csv",
+    "city_seed_sha256": "a2153ab36696b23c570523f08a5597542fa2b88313b5ac93b22e3c00bde2d7a1",
+    "builder": "scripts/build_nasa_power_climate.py",
+    "builder_sha256": "ad52ee70ffeda6c9407524a179ae7b915975a88526d54df9b4843cf97f9b26b2"
+  },
+  "outputs": {
+    "monthly": {
+      "path": "data/climate/nasa_power_merra2_city_monthly_2000_2025.csv",
+      "rows": 924,
+      "sha256": "92e14237546b7e3bf5acab66bd6f3dd83aff05551a9efcbac19068100ea29f88"
+    },
+    "annual": {
+      "path": "data/climate/nasa_power_merra2_city_annual_2000_2025.csv",
+      "rows": 77,
+      "sha256": "00025912f3f8bdac3e294a3c80489c23838d0d89cf4344e6dde1e43ee5507336"
+    }
+  },
+  "city_responses": [
+    {
+      "city": "Beijing",
+      "requested_latitude": 39.9042,
+      "requested_longitude": 116.4074,
+      "grid_longitude": 116.407,
+      "grid_latitude": 39.904,
+      "elevation_m": 221.57,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "6516b58b38f3bc04c01c923c8a48dd6f5940945525039ca744692cb800183b3a"
+    },
+    {
+      "city": "Shanghai",
+      "requested_latitude": 31.2304,
+      "requested_longitude": 121.4737,
+      "grid_longitude": 121.474,
+      "grid_latitude": 31.23,
+      "elevation_m": 3.54,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "adf85f6fe400d5cec2acc1907a71b34a8d994b39a92496b29197c99b1857680c"
+    },
+    {
+      "city": "Guangzhou",
+      "requested_latitude": 23.1291,
+      "requested_longitude": 113.2644,
+      "grid_longitude": 113.264,
+      "grid_latitude": 23.129,
+      "elevation_m": 22.07,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "5a9dd23803c1738df1559c2254484d25ae2bb4815426ef63811f1a5cc8260e7d"
+    },
+    {
+      "city": "Shenzhen",
+      "requested_latitude": 22.5431,
+      "requested_longitude": 114.0579,
+      "grid_longitude": 114.058,
+      "grid_latitude": 22.543,
+      "elevation_m": 17.55,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "db35a6002278dd7707d1bacf239468230bd4baf512c0dc866d6d79f68f2dffa9"
+    },
+    {
+      "city": "Hangzhou",
+      "requested_latitude": 30.2741,
+      "requested_longitude": 120.1551,
+      "grid_longitude": 120.155,
+      "grid_latitude": 30.274,
+      "elevation_m": 70.54,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "93cf6eef2c13f0bcbc28905609aa7adfcd086b986a70cb2c64b32fa89a32ee26"
+    },
+    {
+      "city": "Nanjing",
+      "requested_latitude": 32.0603,
+      "requested_longitude": 118.7969,
+      "grid_longitude": 118.797,
+      "grid_latitude": 32.06,
+      "elevation_m": 23.36,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "b8fbd29eabb18976de67d7fb84f8f7ff2c9084dd3a7cc7423f062aa9dc800a2d"
+    },
+    {
+      "city": "Suzhou",
+      "requested_latitude": 31.2989,
+      "requested_longitude": 120.5853,
+      "grid_longitude": 120.585,
+      "grid_latitude": 31.299,
+      "elevation_m": 5.6,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "bc8f11322f5e1aa6a6bc3eb0a4f98603812158d6ef3e5fe57aa559a25d020ea1"
+    },
+    {
+      "city": "Qingdao",
+      "requested_latitude": 36.0671,
+      "requested_longitude": 120.3826,
+      "grid_longitude": 120.383,
+      "grid_latitude": 36.067,
+      "elevation_m": 29.96,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "61dcca79983c8556059168e57cd67cbe98316607c4ff051cdf43b2dc0633168e"
+    },
+    {
+      "city": "Dalian",
+      "requested_latitude": 38.914,
+      "requested_longitude": 121.6147,
+      "grid_longitude": 121.615,
+      "grid_latitude": 38.914,
+      "elevation_m": 12.67,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "26d71b7c6f458621312da79ef32aaf0670553af8c88cdb11ae30170d458b5485"
+    },
+    {
+      "city": "Tianjin",
+      "requested_latitude": 39.3434,
+      "requested_longitude": 117.3616,
+      "grid_longitude": 117.362,
+      "grid_latitude": 39.343,
+      "elevation_m": 5.8,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "7751ef40c76b12ae3a6d719f2b823aba374c3a140045c68c784e2eb89b54bccc"
+    },
+    {
+      "city": "Chengdu",
+      "requested_latitude": 30.5728,
+      "requested_longitude": 104.0668,
+      "grid_longitude": 104.067,
+      "grid_latitude": 30.573,
+      "elevation_m": 484.56,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "c7cbd7d1c38568f51e396dd0273d5fa1ff226bd02045bbf2fd0de8d0f9aa266d"
+    },
+    {
+      "city": "Chongqing",
+      "requested_latitude": 29.4316,
+      "requested_longitude": 106.9123,
+      "grid_longitude": 106.912,
+      "grid_latitude": 29.432,
+      "elevation_m": 509.3,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "7ec2fca28405ea7b26806964652d7f81d82066c71e1de88424cd2aa043dbedf2"
+    },
+    {
+      "city": "Wuhan",
+      "requested_latitude": 30.5928,
+      "requested_longitude": 114.3055,
+      "grid_longitude": 114.305,
+      "grid_latitude": 30.593,
+      "elevation_m": 29.3,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "037e028deb935af51edf55662ee4f57ba5650be1f38ba4749c3291dfc78c661a"
+    },
+    {
+      "city": "Changsha",
+      "requested_latitude": 28.2282,
+      "requested_longitude": 112.9388,
+      "grid_longitude": 112.939,
+      "grid_latitude": 28.228,
+      "elevation_m": 88.64,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "bff618c6ddd2eda53cb144f5bfee3eae9f93bfb1b50d274b534940b705fac75b"
+    },
+    {
+      "city": "Xian",
+      "requested_latitude": 34.3416,
+      "requested_longitude": 108.9398,
+      "grid_longitude": 108.94,
+      "grid_latitude": 34.342,
+      "elevation_m": 592.71,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "976b23b672882358006db22dce99c9c868982d70808ca7eff90d94f0b0ff1136"
+    },
+    {
+      "city": "Zhengzhou",
+      "requested_latitude": 34.7466,
+      "requested_longitude": 113.6254,
+      "grid_longitude": 113.625,
+      "grid_latitude": 34.747,
+      "elevation_m": 129.36,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "2623dadb8a39cd6b6f1ac87b8630f38a99b70ea788267912454c46c271b09707"
+    },
+    {
+      "city": "Jinan",
+      "requested_latitude": 36.6512,
+      "requested_longitude": 117.1201,
+      "grid_longitude": 117.12,
+      "grid_latitude": 36.651,
+      "elevation_m": 183.18,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "0c6dd600f1e80097c7b165b9067974bd6113cb6490654fd5b6ac6caa96e6ca8b"
+    },
+    {
+      "city": "Hefei",
+      "requested_latitude": 31.8206,
+      "requested_longitude": 117.2272,
+      "grid_longitude": 117.227,
+      "grid_latitude": 31.821,
+      "elevation_m": 45.87,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "993ec22fed9decb2200abe1bfab21672207b5719c3b8b5d31bc61b658c519888"
+    },
+    {
+      "city": "Fuzhou",
+      "requested_latitude": 26.0745,
+      "requested_longitude": 119.2965,
+      "grid_longitude": 119.296,
+      "grid_latitude": 26.075,
+      "elevation_m": 206.95,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "bdc2a794c2070cceda7e6178577e978824d12548cc20b52bdf989ecb36b52dc9"
+    },
+    {
+      "city": "Xiamen",
+      "requested_latitude": 24.4798,
+      "requested_longitude": 118.0894,
+      "grid_longitude": 118.089,
+      "grid_latitude": 24.48,
+      "elevation_m": 111.81,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "493d0bf3cf7f5e1c8792f0a6ca6b7c7cc3d90d9adb9eaf4ef70a9a1475f955fd"
+    },
+    {
+      "city": "Kunming",
+      "requested_latitude": 25.0389,
+      "requested_longitude": 102.7183,
+      "grid_longitude": 102.718,
+      "grid_latitude": 25.039,
+      "elevation_m": 2021.13,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "53c0fdb8c0f3e270080bac3b19ae02c35f8d68bb907a524eb5b3d676e918b317"
+    },
+    {
+      "city": "Guiyang",
+      "requested_latitude": 26.647,
+      "requested_longitude": 106.6302,
+      "grid_longitude": 106.63,
+      "grid_latitude": 26.647,
+      "elevation_m": 1233.94,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "5b906b28461d616d946df81e797f3c0e0d9ab848ad35546798f09d8a372048cf"
+    },
+    {
+      "city": "Nanning",
+      "requested_latitude": 22.817,
+      "requested_longitude": 108.3669,
+      "grid_longitude": 108.367,
+      "grid_latitude": 22.817,
+      "elevation_m": 175.02,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "00a71fb059115a70743a60673fd50e627c21a087f4f42853c57d938340154ad6"
+    },
+    {
+      "city": "Haikou",
+      "requested_latitude": 20.044,
+      "requested_longitude": 110.1999,
+      "grid_longitude": 110.2,
+      "grid_latitude": 20.044,
+      "elevation_m": 27.38,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "2895226fce48e234d12d5b6344c958c4392f19a23813da6391786ced931235f0"
+    },
+    {
+      "city": "Sanya",
+      "requested_latitude": 18.2528,
+      "requested_longitude": 109.512,
+      "grid_longitude": 109.512,
+      "grid_latitude": 18.253,
+      "elevation_m": 265.47,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "177371ee77d1a0b8280bf7f719cb5693a0cf28f761ef4edd8748faa34c22fd78"
+    },
+    {
+      "city": "Harbin",
+      "requested_latitude": 45.8038,
+      "requested_longitude": 126.5349,
+      "grid_longitude": 126.535,
+      "grid_latitude": 45.804,
+      "elevation_m": 137.82,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "b7c54405f3077d98dd5498d84ca892ca451c7ee440addcdf59e46b9e22ef68fa"
+    },
+    {
+      "city": "Changchun",
+      "requested_latitude": 43.8171,
+      "requested_longitude": 125.3235,
+      "grid_longitude": 125.323,
+      "grid_latitude": 43.817,
+      "elevation_m": 223.1,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "2dc99e52fbea5bdd4c6855090acd3216145ed2b0a416f49a54fc830cda94b1be"
+    },
+    {
+      "city": "Shenyang",
+      "requested_latitude": 41.8057,
+      "requested_longitude": 123.4315,
+      "grid_longitude": 123.431,
+      "grid_latitude": 41.806,
+      "elevation_m": 55.12,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "fc7405e41bf5a78a0e4a4d1f3ba8b52cf28748ce9487be15ee4ca293d343d078"
+    },
+    {
+      "city": "Hohhot",
+      "requested_latitude": 40.8426,
+      "requested_longitude": 111.7492,
+      "grid_longitude": 111.749,
+      "grid_latitude": 40.843,
+      "elevation_m": 1493.16,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "056bffd7473d2330b38d31c3992e4b6b7c056b4088fbce4038a3329927dee12d"
+    },
+    {
+      "city": "Urumqi",
+      "requested_latitude": 43.8256,
+      "requested_longitude": 87.6168,
+      "grid_longitude": 87.617,
+      "grid_latitude": 43.826,
+      "elevation_m": 737.35,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e7eff95a34d4069a8e7c88da4c8518f5655509f4561f572301ed2e943274232d"
+    },
+    {
+      "city": "Lanzhou",
+      "requested_latitude": 36.0611,
+      "requested_longitude": 103.8343,
+      "grid_longitude": 103.834,
+      "grid_latitude": 36.061,
+      "elevation_m": 2068.47,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "d3f86690fcd9daa03db1ed2b0fd19c5e5dca99659087fd4f4b0862d8438a6559"
+    },
+    {
+      "city": "Xining",
+      "requested_latitude": 36.6171,
+      "requested_longitude": 101.7782,
+      "grid_longitude": 101.778,
+      "grid_latitude": 36.617,
+      "elevation_m": 2673.88,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e02652233470631a6a131e68b5f5bbff2ee51398118d486bf92c8d4c2f0b57ce"
+    },
+    {
+      "city": "Yinchuan",
+      "requested_latitude": 38.4872,
+      "requested_longitude": 106.2309,
+      "grid_longitude": 106.231,
+      "grid_latitude": 38.487,
+      "elevation_m": 1352.59,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "aaab3a02b76f74dfdfadeb1d1dde38a14abe763f635f5f32259985710132c2c3"
+    },
+    {
+      "city": "Lhasa",
+      "requested_latitude": 29.652,
+      "requested_longitude": 91.1721,
+      "grid_longitude": 91.172,
+      "grid_latitude": 29.652,
+      "elevation_m": 4316.71,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "69f2b16549795e91006004b06628f6bca7d1bafbfe0446c786147a65060a5c11"
+    },
+    {
+      "city": "Taiyuan",
+      "requested_latitude": 37.8706,
+      "requested_longitude": 112.5489,
+      "grid_longitude": 112.549,
+      "grid_latitude": 37.871,
+      "elevation_m": 1200.77,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "8fbee9ad997eeeb1997a9a1550a0fbae8d4b68e421d97f2cbe33de9a17c84033"
+    },
+    {
+      "city": "Shijiazhuang",
+      "requested_latitude": 38.0428,
+      "requested_longitude": 114.5149,
+      "grid_longitude": 114.515,
+      "grid_latitude": 38.043,
+      "elevation_m": 191.76,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "cd22fd8371dc98019d47b9c02659fcc2b80cb65da6452af0fd183cf3bb218197"
+    },
+    {
+      "city": "Ningbo",
+      "requested_latitude": 29.8683,
+      "requested_longitude": 121.544,
+      "grid_longitude": 121.544,
+      "grid_latitude": 29.868,
+      "elevation_m": 77.86,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "f4db7a31ecec9cf691beca749ee7fd95c147b9ef35e18bb707ff81d75c650c10"
+    },
+    {
+      "city": "Wenzhou",
+      "requested_latitude": 27.9938,
+      "requested_longitude": 120.6994,
+      "grid_longitude": 120.699,
+      "grid_latitude": 27.994,
+      "elevation_m": 205.26,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e2fb22fcde21ee7bd8228e102d4876cabc64cd41ff02003301ae076058a9d216"
+    },
+    {
+      "city": "Zhuhai",
+      "requested_latitude": 22.2711,
+      "requested_longitude": 113.5767,
+      "grid_longitude": 113.577,
+      "grid_latitude": 22.271,
+      "elevation_m": 17.55,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "2bd7f8d10a920d505bdcd6d32c1ed292a846bdc741660b7c952be083a55be3ee"
+    },
+    {
+      "city": "Hong Kong",
+      "requested_latitude": 22.3193,
+      "requested_longitude": 114.1694,
+      "grid_longitude": 114.169,
+      "grid_latitude": 22.319,
+      "elevation_m": 53.17,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "180b3bc0c087bd39862b32e6fbd4b414eec0ad27563ec94d40905cc9344aa478"
+    },
+    {
+      "city": "Macau",
+      "requested_latitude": 22.1987,
+      "requested_longitude": 113.5439,
+      "grid_longitude": 113.544,
+      "grid_latitude": 22.199,
+      "elevation_m": 6.2,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "6ffc5b85e95dfbae5c380cafbba2443e641779ce1495569d3fe1166987e715d8"
+    },
+    {
+      "city": "Taipei",
+      "requested_latitude": 25.033,
+      "requested_longitude": 121.5654,
+      "grid_longitude": 121.565,
+      "grid_latitude": 25.033,
+      "elevation_m": 100.59,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "05f0c2d78f1c5cd9816c2779c3af296229771d30710d12046eaae9e26f04ccb8"
+    },
+    {
+      "city": "Mohe",
+      "requested_latitude": 52.9721,
+      "requested_longitude": 122.5386,
+      "grid_longitude": 122.539,
+      "grid_latitude": 52.972,
+      "elevation_m": 569.64,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "33d5ddf896fff48cd2ee4ca2cd7eef57dbaa44de0d3be80695286657bd517acf"
+    },
+    {
+      "city": "Heihe",
+      "requested_latitude": 50.2458,
+      "requested_longitude": 127.5285,
+      "grid_longitude": 127.528,
+      "grid_latitude": 50.246,
+      "elevation_m": 215.51,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "2e897e5b165ff10672a47efeef746ce9ac6b97554508d3214e5659e3c1e71170"
+    },
+    {
+      "city": "Hulunbuir",
+      "requested_latitude": 49.2116,
+      "requested_longitude": 119.7657,
+      "grid_longitude": 119.766,
+      "grid_latitude": 49.212,
+      "elevation_m": 724.23,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "40dc5b022502fb3f15d6b95c6a81d9dd16b3767f25466cf9ad1e4b0039aeec32"
+    },
+    {
+      "city": "Genhe",
+      "requested_latitude": 50.7804,
+      "requested_longitude": 121.5206,
+      "grid_longitude": 121.521,
+      "grid_latitude": 50.78,
+      "elevation_m": 939.5,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "3599d18caed19ff51613a5d6631b9cba936f64fb64f72f5651468f1e24ad74aa"
+    },
+    {
+      "city": "Altay",
+      "requested_latitude": 47.8456,
+      "requested_longitude": 88.1318,
+      "grid_longitude": 88.132,
+      "grid_latitude": 47.846,
+      "elevation_m": 1692.73,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "7f939b4397c990fda245d218bc4aef0ee21b6c5d89887ec0ab7fbc7604f88393"
+    },
+    {
+      "city": "New York",
+      "requested_latitude": 40.7128,
+      "requested_longitude": -74.006,
+      "grid_longitude": -74.006,
+      "grid_latitude": 40.713,
+      "elevation_m": 10.17,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "5dfb1fd6a431f37b56a9895d060e8a872c11e941f65f9258f53cd435ecefbbd1"
+    },
+    {
+      "city": "Boston",
+      "requested_latitude": 42.3601,
+      "requested_longitude": -71.0589,
+      "grid_longitude": -71.059,
+      "grid_latitude": 42.36,
+      "elevation_m": 71.06,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "42467019f2990fb21bd507c4bf813a23cdaa1f9247c1aaf4eefd5107919c218d"
+    },
+    {
+      "city": "San Francisco",
+      "requested_latitude": 37.7749,
+      "requested_longitude": -122.4194,
+      "grid_longitude": -122.419,
+      "grid_latitude": 37.775,
+      "elevation_m": 86.52,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "266fe633060e14413345833fc019a30c8082c2776bc9625115c4c544769d3342"
+    },
+    {
+      "city": "Los Angeles",
+      "requested_latitude": 34.0522,
+      "requested_longitude": -118.2437,
+      "grid_longitude": -118.244,
+      "grid_latitude": 34.052,
+      "elevation_m": 395.0,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "4ebb37a1e19918b69318560248ad88ec5f73017b84ebf248abf37f7da6545ca8"
+    },
+    {
+      "city": "Seattle",
+      "requested_latitude": 47.6062,
+      "requested_longitude": -122.3321,
+      "grid_longitude": -122.332,
+      "grid_latitude": 47.606,
+      "elevation_m": 110.01,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "3cba38b3918d100c651383e6ee56413456760a358c04cfcfc1b226a1e52c967b"
+    },
+    {
+      "city": "Toronto",
+      "requested_latitude": 43.6532,
+      "requested_longitude": -79.3832,
+      "grid_longitude": -79.383,
+      "grid_latitude": 43.653,
+      "elevation_m": 98.64,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "131d7c1076777d4ee655fd3e7bdc8b6e1477bd21f8d1f16a25f7ff50b57a9f93"
+    },
+    {
+      "city": "Vancouver",
+      "requested_latitude": 49.2827,
+      "requested_longitude": -123.1207,
+      "grid_longitude": -123.121,
+      "grid_latitude": 49.283,
+      "elevation_m": 565.27,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "6eb276e748cbcc0943bcce42014aefd58a771a65e33a9fe0eb15b7a2f9c0f9f8"
+    },
+    {
+      "city": "London",
+      "requested_latitude": 51.5072,
+      "requested_longitude": -0.1276,
+      "grid_longitude": -0.128,
+      "grid_latitude": 51.507,
+      "elevation_m": 73.15,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "f0c2d946c9971eb9eca4881ee985dc6ad612c0e096864d01f8988d4429d5a279"
+    },
+    {
+      "city": "Paris",
+      "requested_latitude": 48.8566,
+      "requested_longitude": 2.3522,
+      "grid_longitude": 2.352,
+      "grid_latitude": 48.857,
+      "elevation_m": 92.41,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "5c38ea2b21832775e1218cc2096bc58bbd94a05f73ab90da9b13c657417cf508"
+    },
+    {
+      "city": "Berlin",
+      "requested_latitude": 52.52,
+      "requested_longitude": 13.405,
+      "grid_longitude": 13.405,
+      "grid_latitude": 52.52,
+      "elevation_m": 48.98,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "ba9872602098f22446db90379f8037afef8e4c99ae052c82209b200880e29830"
+    },
+    {
+      "city": "Amsterdam",
+      "requested_latitude": 52.3676,
+      "requested_longitude": 4.9041,
+      "grid_longitude": 4.904,
+      "grid_latitude": 52.368,
+      "elevation_m": -0.95,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "1bf61d02cf42b7abb6b4f0819cf9d3707e5a2e6bcbce98742dfdb022bee18fe5"
+    },
+    {
+      "city": "Zurich",
+      "requested_latitude": 47.3769,
+      "requested_longitude": 8.5417,
+      "grid_longitude": 8.542,
+      "grid_latitude": 47.377,
+      "elevation_m": 566.56,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "bacbb34c6e9878322e82c528b3b4f00ba838b162c9855d7cefbd45c33f686974"
+    },
+    {
+      "city": "Copenhagen",
+      "requested_latitude": 55.6761,
+      "requested_longitude": 12.5683,
+      "grid_longitude": 12.568,
+      "grid_latitude": 55.676,
+      "elevation_m": 16.47,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "ce7e2c8611f43c1d01d6e7b7d3a107ca998a20c31c556eb839aabc7fb3f86504"
+    },
+    {
+      "city": "Stockholm",
+      "requested_latitude": 59.3293,
+      "requested_longitude": 18.0686,
+      "grid_longitude": 18.069,
+      "grid_latitude": 59.329,
+      "elevation_m": 26.64,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e2b82859f359ba31790ff7652aeb2f4e5a43f357aa0e889686f9832591aa57c9"
+    },
+    {
+      "city": "Helsinki",
+      "requested_latitude": 60.1699,
+      "requested_longitude": 24.9384,
+      "grid_longitude": 24.938,
+      "grid_latitude": 60.17,
+      "elevation_m": 9.17,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "b473e70e8120bca7541db58f4a7c282483e0758eabd4e6bb22a37899ca0e1cd0"
+    },
+    {
+      "city": "Dublin",
+      "requested_latitude": 53.3498,
+      "requested_longitude": -6.2603,
+      "grid_longitude": -6.26,
+      "grid_latitude": 53.35,
+      "elevation_m": 46.03,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e1a4b4658b3b72bd624a36e06fe5f250025fcdb264ca4f4a8b561c5719ea4e99"
+    },
+    {
+      "city": "Barcelona",
+      "requested_latitude": 41.3874,
+      "requested_longitude": 2.1686,
+      "grid_longitude": 2.169,
+      "grid_latitude": 41.387,
+      "elevation_m": 302.35,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "3ecb61fc6e82780b96bae3ef24341c341c326c1c10fdb9f7aa63259a0be52632"
+    },
+    {
+      "city": "Rome",
+      "requested_latitude": 41.9028,
+      "requested_longitude": 12.4964,
+      "grid_longitude": 12.496,
+      "grid_latitude": 41.903,
+      "elevation_m": 198.41,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "449d45a06ffba90967b30b12319ca2aa88b4354076d6fb534112cae1cce0463e"
+    },
+    {
+      "city": "Madrid",
+      "requested_latitude": 40.4168,
+      "requested_longitude": -3.7038,
+      "grid_longitude": -3.704,
+      "grid_latitude": 40.417,
+      "elevation_m": 779.85,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "86a11cf62b1f3e430409616e9d54265e65fdf82140b453d24d2539e7aefe97ee"
+    },
+    {
+      "city": "Tokyo",
+      "requested_latitude": 35.6762,
+      "requested_longitude": 139.6503,
+      "grid_longitude": 139.65,
+      "grid_latitude": 35.676,
+      "elevation_m": 232.92,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "030d6e97153f6d53580045dcf64d3a5730b1fe00c41dea7a1f3e18f1e8caa5ad"
+    },
+    {
+      "city": "Seoul",
+      "requested_latitude": 37.5665,
+      "requested_longitude": 126.978,
+      "grid_longitude": 126.978,
+      "grid_latitude": 37.566,
+      "elevation_m": 73.25,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "61ffc18aebaf0cabf0f4ba932f748abb32283040bc37264927c91ab39b3777c0"
+    },
+    {
+      "city": "Singapore",
+      "requested_latitude": 1.3521,
+      "requested_longitude": 103.8198,
+      "grid_longitude": 103.82,
+      "grid_latitude": 1.352,
+      "elevation_m": 25.8,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "709269eb8e9940ab9b866142abb538c69524af56ccbeba19a25137188949c9ee"
+    },
+    {
+      "city": "Bangkok",
+      "requested_latitude": 13.7563,
+      "requested_longitude": 100.5018,
+      "grid_longitude": 100.502,
+      "grid_latitude": 13.756,
+      "elevation_m": 4.48,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "e0e36585dd984a84cbbf6914b452f8fe0da24e62024c0d5943de1f74aabdf2df"
+    },
+    {
+      "city": "Sydney",
+      "requested_latitude": -33.8688,
+      "requested_longitude": 151.2093,
+      "grid_longitude": 151.209,
+      "grid_latitude": -33.869,
+      "elevation_m": 31.72,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "a0ecfd03d7ce62b8dfde2e45d0a55165f2d38f9f7428c876c65bcb8d273f4441"
+    },
+    {
+      "city": "Melbourne",
+      "requested_latitude": -37.8136,
+      "requested_longitude": 144.9631,
+      "grid_longitude": 144.963,
+      "grid_latitude": -37.814,
+      "elevation_m": 58.74,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "d8e372d088e9ccd51103974047584ca017be549db15672ef9789500bd99001f3"
+    },
+    {
+      "city": "Auckland",
+      "requested_latitude": -36.8509,
+      "requested_longitude": 174.7645,
+      "grid_longitude": 174.764,
+      "grid_latitude": -36.851,
+      "elevation_m": 50.23,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "640dd0efbdadb345b6aefe98ea279e91570f834957367f3ceecb98b4e6760edd"
+    },
+    {
+      "city": "Dubai",
+      "requested_latitude": 25.2048,
+      "requested_longitude": 55.2708,
+      "grid_longitude": 55.271,
+      "grid_latitude": 25.205,
+      "elevation_m": 20.89,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "939f38ebca8b224abf54c327ae69e8cfc9bb9dbd4bc2efdbaea12108148dcad0"
+    },
+    {
+      "city": "Istanbul",
+      "requested_latitude": 41.0082,
+      "requested_longitude": 28.9784,
+      "grid_longitude": 28.978,
+      "grid_latitude": 41.008,
+      "elevation_m": 59.56,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "7fadf8879c44cbc99de350cef785c6c629ab456d5af984e225bf4982c5a91267"
+    },
+    {
+      "city": "Cape Town",
+      "requested_latitude": -33.9249,
+      "requested_longitude": 18.4241,
+      "grid_longitude": 18.424,
+      "grid_latitude": -33.925,
+      "elevation_m": 18.82,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "3d0a469d2b5eac13661b7904a464a18dd40f4c2670f41a4485d89f0fbf42622a"
+    },
+    {
+      "city": "Nairobi",
+      "requested_latitude": -1.2921,
+      "requested_longitude": 36.8219,
+      "grid_longitude": 36.822,
+      "grid_latitude": -1.292,
+      "elevation_m": 1642.2,
+      "time_standard": "LST",
+      "api_version": "v2.9.5",
+      "sources": [
+        "MERRA2",
+        "POWER"
+      ],
+      "response_sha256": "93c1ff75f27c124b88c6a458263b57378e828d0112478e5bf6e04c8303d39cd3"
+    }
+  ]
+}
