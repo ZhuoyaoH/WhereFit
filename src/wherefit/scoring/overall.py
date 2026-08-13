@@ -45,7 +45,7 @@ def rank_cities(results: list[CityResult]) -> list[CityResult]:
 def _strengths(components: dict[str, float], metrics: ClimateMetrics) -> list[str]:
     strengths: list[str] = []
     if components["温度舒适"] >= 78:
-        strengths.append("温度体感较友好")
+        strengths.append("温度较舒适")
     if components["湿度舒适"] >= 78:
         strengths.append("湿度压力较低")
     if components["降水友好"] >= 78:
@@ -59,7 +59,7 @@ def _strengths(components: dict[str, float], metrics: ClimateMetrics) -> list[st
 
 def _weaknesses(components: dict[str, float]) -> list[str]:
     labels = {
-        "温度舒适": "温度或体感温度可能不理想",
+        "温度舒适": "气温可能不理想",
         "湿度舒适": "湿度偏高，闷热感可能明显",
         "降水友好": "降水或强降水天数偏多",
         "空气质量": "空气质量指标偏弱",
@@ -93,7 +93,7 @@ def _warnings(metrics: ClimateMetrics, risk_score: float) -> list[str]:
             "apparent_temperature",
             "snow_days",
         }.issubset(metrics.estimated_fields):
-            warnings.append("多年气候数据中的体感温度由温度、湿度和风速计算；可能下雪日由温度和降水推算")
+            warnings.append("多年气候数据中的可能下雪日由温度和降水推算")
         elif metrics.pm25_status == "dataset" and "relative_humidity_mean" in metrics.estimated_fields:
             warnings.append("历史天气来自公开资料汇总，湿度为估算；长期 PM2.5 使用多年融合数据")
         else:

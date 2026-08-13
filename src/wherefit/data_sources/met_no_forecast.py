@@ -145,7 +145,7 @@ def _summarize_met_no(
         confidence=_forecast_confidence(days, status) * 0.9,
         source=PROVIDER_NAME,
         status=status,
-        message=message + "；该源不提供体感温度和降水概率，体感列暂用最高温近似。",
+        message=message + "；该源不提供降水概率。",
         provider=PROVIDER_NAME,
         temperature_unit=labels["temperature"],
         precipitation_unit=labels["precipitation"],

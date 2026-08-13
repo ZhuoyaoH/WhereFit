@@ -167,7 +167,7 @@ def test_static_metrics_use_power_and_acag_sources() -> None:
     assert quality["humidity"].fallback_used is False
     assert quality["long_term_air_quality"].fallback_used is False
     assert not any("湿度仍为估算" in warning for warning in result.score.warnings)
-    assert any("体感温度" in warning and "雪日" in warning for warning in result.score.warnings)
+    assert any("可能下雪日" in warning for warning in result.score.warnings)
 
 
 def test_charts_use_one_higher_is_better_direction() -> None:

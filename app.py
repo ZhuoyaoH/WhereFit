@@ -182,16 +182,16 @@ STATUS_LABELS = {
 }
 
 PHRASE_EN = {
-    "温度体感较友好": "comfortable perceived temperature",
+    "温度较舒适": "comfortable temperature",
     "湿度压力较低": "lower humidity pressure",
     "降水干扰较少": "less rain disruption",
     "空气质量指标较好": "better air-quality indicator",
     "沿海调节有助于缓和高温": "coastal moderation helps reduce heat",
     "综合表现相对均衡": "balanced overall profile",
-    "未来几天气温体感较友好": "comfortable short-term temperature",
+    "未来几天气温较舒适": "comfortable short-term temperature",
     "预报降水干扰较少": "less forecast rain disruption",
     "未来天气出行条件相对均衡": "balanced short-term travel weather",
-    "温度或体感温度可能不理想": "temperature or perceived temperature may be uncomfortable",
+    "气温可能不理想": "temperature may be uncomfortable",
     "湿度偏高，闷热感可能明显": "humidity may feel high",
     "降水或强降水天数偏多": "rain or heavy-rain days may be frequent",
     "空气质量指标偏弱": "air-quality indicator may be weaker",
@@ -199,7 +199,7 @@ PHRASE_EN = {
     "强降水风险指标偏高": "heavy rain may be a concern",
     "长期空气污染指标偏高": "long-term air quality may be a concern",
     "沿海或台风影响需要留意": "coastal or typhoon conditions may need attention",
-    "未来几天气温或体感温度不理想": "short-term temperature may be uncomfortable",
+    "未来几天气温不理想": "short-term temperature may be uncomfortable",
     "未来几天可能有降水干扰": "short-term rain may disrupt travel",
     "预报时间窗较远，时效权重较低": "the forecast dates are farther away",
     "近期空气质量可能影响出行体验": "recent air quality may affect travel comfort",
@@ -1252,8 +1252,8 @@ def _render_history_tab(results: list[CityResult], pref: UserPreference, data_mo
         st.markdown(
             _t(
                 lang,
-                "数据来源：[NASA POWER](https://power.larc.nasa.gov/)（项目将 MERRA-2/POWER 的资料整理为月度和年度平均；体感温度为计算值，可能下雪日为推算值）。",
-                "Source: [NASA POWER](https://power.larc.nasa.gov/) (MERRA-2/POWER data summarized into monthly and annual averages; apparent temperature is calculated and snow days are estimated).",
+                "数据来源：[NASA POWER](https://power.larc.nasa.gov/)（项目将 MERRA-2/POWER 的资料整理为月度和年度平均；可能下雪日为推算值）。",
+                "Source: [NASA POWER](https://power.larc.nasa.gov/) (MERRA-2/POWER data summarized into monthly and annual averages; possible snow days are estimated).",
             )
         )
         return
@@ -1326,11 +1326,12 @@ def _render_history_table(results: list[CityResult], lang: str) -> None:
                 _t(lang, "状态", "Status"): _status_label(metrics.data_status, lang),
                 _t(lang, "样本年数", "Sample Years"): metrics.sample_years,
                 _t(lang, "平均气温（摄氏度）", "Mean Temp (C)"): round(metrics.temperature_mean, 1),
-                _t(lang, "体感温度（摄氏度）", "Apparent Temp (C)"): round(metrics.apparent_temperature, 1),
                 _t(lang, "降水日", "Rain Days"): round(metrics.precipitation_days, 1),
                 _t(lang, "强降水日", "Heavy-rain Days"): round(metrics.heavy_rain_days, 1),
                 _t(lang, "极端降水日", "Extreme-rain Days"): round(metrics.precipitation_extreme_days, 1),
                 _t(lang, "高温日", "Hot Days"): round(metrics.hot_days, 1),
+                _t(lang, "寒冷日", "Cold Days"): round(metrics.cold_days, 1),
+                _t(lang, "大风日", "Windy Days"): round(metrics.windy_days, 1),
                 _t(lang, "长期 PM2.5（微克/立方米）", "Long-term PM2.5 (ug/m3)"): round(metrics.pm25, 1),
                 _t(lang, "PM2.5 年趋势（微克/立方米/年）", "PM2.5 Trend (ug/m3/year)"): (
                     round(metrics.pm25_trend_per_year, 2) if metrics.pm25_trend_per_year is not None else None
@@ -1447,7 +1448,6 @@ def _render_forecast_summaries(summaries: list[ForecastSummary], lang: str) -> N
             _t(lang, "天数", "Days"): [item.days for item in summaries],
             _t(lang, "最高温均值", "Mean High Temp"): [f"{round(item.temp_max_mean, 1)} {item.temperature_unit}" for item in summaries],
             _t(lang, "最低温均值", "Mean Low Temp"): [f"{round(item.temp_min_mean, 1)} {item.temperature_unit}" for item in summaries],
-            _t(lang, "最高体感均值", "Mean Apparent High"): [f"{round(item.apparent_temp_max_mean, 1)} {item.temperature_unit}" for item in summaries],
             _t(lang, "降水天数", "Rain Days"): [_days_label(item.precipitation_days, lang) for item in summaries],
             _t(lang, "最大降水概率", "Max Rain Probability"): [round(item.precipitation_probability_max, 1) for item in summaries],
             _t(lang, "强降水天数", "Heavy-rain Days"): [_days_label(item.heavy_rain_days, lang) for item in summaries],
@@ -1808,8 +1808,8 @@ def _method_section(lang: str) -> None:
                 **Time-scale rules**
 
                 - The offline comparison uses bundled 2000-2025 NASA POWER / MERRA-2 area estimates. Historical mode separately requests ERA5 for the dates you choose.
-                - Full-year rain, heat, cold, and similar day counts are displayed as annual totals, but converted to monthly-equivalent rates before applying thresholds calibrated for a month.
-                - POWER humidity is provided directly; apparent temperature is calculated and snow days are estimated from temperature and precipitation. Long-term air quality uses ACAG SatPM2.5 annual data for 2015-2024.
+                - In full-year mode, Rain Days (≥1 mm/day), Heavy-rain Days (≥20 mm/day), Extreme-rain Days (≥50 mm/day), and Hot Days (daily maximum ≥35°C) are displayed as the average number of qualifying days per year.
+                - POWER humidity is provided directly; possible snow days are estimated from temperature and precipitation. Long-term air quality uses ACAG SatPM2.5 annual data for 2015-2024.
                 - Recent Open-Meteo PM2.5 is used only for Travel scoring in a valid forecast window and is never substituted for a long-term normal.
                 - If forecast data is unavailable, the comparison continues with the multi-year climate match rather than showing a misleading zero.
 
@@ -1851,8 +1851,8 @@ def _method_section(lang: str) -> None:
             **时间尺度规则**
 
             - 多年气候数据覆盖 2000—2025 年；如果你选择查看指定日期范围，应用会另外读取那段时期的历史天气。
-            - 全年模式会把全年下雨、高温和寒冷天数按月平均后再比较。
-            - 体感温度由温度、湿度和风速算出；“可能下雪日”由温度和降水推算，不是实测雪天。多年空气质量使用 2015—2024 年的数据。
+            - 全年模式展示的降水日（标准：日降水量 ≥1 mm）、强降水日（标准：日降水量 ≥20 mm）、极端降水日（标准：日降水量 ≥50 mm）、高温日（标准：日最高气温 ≥35°C）为平均每年达到标准的天数。
+            - “可能下雪日”由温度和降水推算，不是实测雪天。多年空气质量使用 2015—2024 年的数据。
             - 近期 PM2.5 只用于近期旅行比较，不会替代多年的空气质量情况。
             - 如果未来天气暂时取不到，应用会使用多年气候数据继续比较，不会把城市直接算成 0 分。
 
@@ -2012,6 +2012,7 @@ def _quality_text(value: str, lang: str) -> str:
         "on demand": "需要时查询",
         "recent 8-day window": "最近 8 天",
         "Temperature, precipitation, and related information used to calculate the preference match.": "温度、降水等信息会用于计算你的偏好匹配分。",
+        "Temperature, humidity, precipitation, and wind come from area-wide weather estimates; possible snow days are estimated from temperature and precipitation.": "温度、湿度、降水和风速来自城市周边天气估计；可能下雪日根据温度和降水推算。",
         "Humidity is estimated from rainfall and regional context because direct humidity data is unavailable for this result.": "这次没有直接湿度数据，所以根据降水和地区情况估算。",
         "Humidity is provided directly by the fixed-model historical dataset.": "湿度来自多年天气数据。",
         "Humidity comes from the basic city reference data.": "湿度来自基础城市参考数据。",
@@ -2121,7 +2122,7 @@ def _warning_en(text: str) -> str:
         "糟糕天气指数偏高，建议进一步了解高温、强降雨和空气质量情况": "The Bad Weather Index is higher; review heat, heavy rain, and air quality in more detail.",
         "当前城市使用人工基础等级，不代表观测常态或权威评级": "This city uses curated baseline levels, not observed normals or an authoritative rating.",
         "温度、湿度和降水等气候项使用城市参考数据；长期 PM2.5 已使用多年融合数据": "Temperature, humidity, and precipitation use city reference data; long-term PM2.5 uses multi-year fused data.",
-        "多年气候数据中的体感温度由温度、湿度和风速计算；可能下雪日由温度和降水推算": "Apparent temperature in the multi-year climate data is calculated from temperature, humidity, and wind speed; possible snow days are estimated from temperature and precipitation.",
+        "多年气候数据中的可能下雪日由温度和降水推算": "Possible snow days in the multi-year climate data are estimated from temperature and precipitation.",
         "历史天气来自公开资料汇总，部分项目为估算或备用参考值": "Historical weather comes from public sources; some values are estimated or use backup references.",
         "历史天气来自公开资料汇总，湿度为估算；长期 PM2.5 使用多年融合数据": "Historical weather comes from public sources and humidity is estimated; long-term PM2.5 uses a multi-year fused dataset.",
         "未来天气暂时无法获取，当前排序改用多年气候匹配分": "Forecast data is unavailable, so the ranking uses the multi-year climate match instead.",

@@ -20,16 +20,16 @@ MODE_LABELS_EN = {
 }
 
 PHRASE_EN = {
-    "温度体感较友好": "comfortable perceived temperature",
+    "温度较舒适": "comfortable temperature",
     "湿度压力较低": "lower humidity pressure",
     "降水干扰较少": "less rain disruption",
     "空气质量指标较好": "better air-quality indicator",
     "沿海调节有助于缓和高温": "coastal moderation helps reduce heat",
     "综合表现相对均衡": "balanced overall profile",
-    "未来几天气温体感较友好": "comfortable short-term temperature",
+    "未来几天气温较舒适": "comfortable short-term temperature",
     "预报降水干扰较少": "less forecast rain disruption",
     "未来天气出行条件相对均衡": "balanced short-term travel weather",
-    "温度或体感温度可能不理想": "temperature or perceived temperature may be uncomfortable",
+    "气温可能不理想": "temperature may be uncomfortable",
     "湿度偏高，闷热感可能明显": "humidity may feel high",
     "降水或强降水天数偏多": "rain or heavy-rain days may be frequent",
     "空气质量指标偏弱": "air-quality indicator may be weaker",
@@ -37,7 +37,7 @@ PHRASE_EN = {
     "强降水风险指标偏高": "heavy rain may be a concern",
     "长期空气污染指标偏高": "long-term air quality may be a concern",
     "沿海或台风影响需要留意": "coastal or typhoon conditions may need attention",
-    "未来几天气温或体感温度不理想": "short-term temperature may be uncomfortable",
+    "未来几天气温不理想": "short-term temperature may be uncomfortable",
     "未来几天可能有降水干扰": "short-term rain may disrupt travel",
     "预报时间窗较远，时效权重较低": "forecast horizon weight is lower",
     "近期空气质量可能影响出行体验": "recent air quality may affect travel comfort",

@@ -26,7 +26,7 @@ def build_data_quality_records(result: CityResult) -> tuple[DataQualityRecord, .
             fallback_used=metrics.data_status == "fallback",
             note=(
                 "Temperature, humidity, precipitation, and wind come from area-wide weather estimates; "
-                "apparent temperature is calculated and snow days are estimated from temperature and precipitation."
+                "possible snow days are estimated from temperature and precipitation."
                 if metrics.data_status == "dataset" and "apparent_temperature" in metrics.estimated_fields
                 else "Temperature, precipitation, and related information used to calculate the preference match."
             ),

@@ -120,7 +120,7 @@ def apply_forecast_score(
 def _forecast_strengths(components: dict[str, float]) -> list[str]:
     strengths: list[str] = []
     if components["预报温度舒适"] >= 78:
-        strengths.append("未来几天气温体感较友好")
+        strengths.append("未来几天气温较舒适")
     if components["预报降水友好"] >= 78:
         strengths.append("预报降水干扰较少")
     return strengths[:2] or ["未来天气出行条件相对均衡"]
@@ -128,7 +128,7 @@ def _forecast_strengths(components: dict[str, float]) -> list[str]:
 
 def _forecast_weaknesses(components: dict[str, float]) -> list[str]:
     labels = {
-        "预报温度舒适": "未来几天气温或体感温度不理想",
+        "预报温度舒适": "未来几天气温不理想",
         "预报降水友好": "未来几天可能有降水干扰",
         "预报时效": "预报时间窗较远，时效权重较低",
         "近期空气质量": "近期空气质量可能影响出行体验",
